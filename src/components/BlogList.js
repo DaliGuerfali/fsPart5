@@ -1,12 +1,18 @@
 import Blog from "./Blog";
 
-const BlogList = ({ blogs, user }) => {
+const BlogList = ({ blogs, handleLike, currentUser, handleDelete }) => {
     return (
         <>
             {
             blogs
-            //.filter(blog => blog.user.username === user.username)
-            .map(blog => <Blog key={blog.id} blog={blog} />)
+            .toSorted((a, b) => -a.likes + b.likes )
+            .map(blog => <Blog 
+                key={blog.id} 
+                blog={blog} 
+                handleLike={handleLike}
+                currentUser={currentUser}
+                handleDelete={handleDelete}
+                />)
             }
         </>
     );

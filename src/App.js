@@ -37,6 +37,7 @@ const App = () => {
   function handleLogout() {
     window.localStorage.removeItem('loggedBlogAppUser');
     setUser(null);
+    blogService.setToken(null);
   }
 
   async function createBlog(blog) {
@@ -57,7 +58,37 @@ const App = () => {
       });
     }
   }
+  
+  async function handleLike(newBlog) {
+    try {
+      await blogService.update(newBlog);
+      setBlogs(blogs.map(blog => blog.id !== newBlog.id ? blog : { ...blog, likes: newBlog.likes }));
+    } catch(err) {
+      console.log(err);
+      setNotification({
+        message: 'failed to like blog',
+        class: 'error'
+      });
+    }
+  }
 
+  async function handleDelete(id) {
+    blogService.setToken(user.token);
+    try {
+      await blogService.deleteBlog(id);
+      setBlogs(blogs.filter(blog => blog.id !== id));
+      setNotification({
+        message: 'deletion successful',
+        class: 'success'
+      });
+    } catch(err) {
+      console.log(err);
+      setNotification({
+        message: 'deletion failed',
+        class: 'error'
+      });
+    }
+  } 
   
 
   if(user === null) {
@@ -81,7 +112,12 @@ const App = () => {
         <Togglable buttonLabel="create new blog" >
           <BlogForm onCreate={createBlog}/>
         </Togglable>
-        <BlogList blogs={blogs} user={user}/>
+        <BlogList 
+          blogs={blogs} 
+          handleLike={handleLike} 
+          currentUser={user}
+          handleDelete={handleDelete}
+        />
       </div>
   )
 }
