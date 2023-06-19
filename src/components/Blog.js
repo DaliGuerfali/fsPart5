@@ -34,7 +34,7 @@ const Blog = ({ blog, handleLike, currentUser, handleDelete }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       <div className="title" >
         {blog.title} {blog.author}
         <button onClick={toggleDetails}>view</button>
@@ -43,12 +43,12 @@ const Blog = ({ blog, handleLike, currentUser, handleDelete }) => {
         <a href={blog.url}>{blog.url}</a>
         <p>
           likes: {blog.likes}
-          <button onClick={likeBlog}>like</button>
+          <button id="likeBtn" onClick={likeBlog}>like</button>
         </p>
         <p>{blog.user.name}</p>
         {
           blog.user.username === currentUser.username ?
-            <button onClick={removeBlog} >remove</button> :
+            <button id="removeBtn" onClick={removeBlog} >remove</button> :
             null
         }
       </div>
