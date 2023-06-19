@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const Blog = ({ blog, handleLike, currentUser, handleDelete }) => {
   const [details, setDetails] = useState(false);
@@ -9,7 +10,7 @@ const Blog = ({ blog, handleLike, currentUser, handleDelete }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  }
+  };
 
   function toggleDetails() {
     setDetails(!details);
@@ -25,6 +26,13 @@ const Blog = ({ blog, handleLike, currentUser, handleDelete }) => {
     }
   }
 
+  Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    currentUser: PropTypes.object.isRequired,
+    handleDelete: PropTypes.func.isRequired,
+    handleLike: PropTypes.func.isRequired,
+  };
+
   return (
     <div style={blogStyle}>
       <div>
@@ -39,13 +47,13 @@ const Blog = ({ blog, handleLike, currentUser, handleDelete }) => {
         </p>
         <p>{blog.user.name}</p>
         {
-        blog.user.username === currentUser.username ? 
-        <button onClick={removeBlog} >remove</button> :
-        null
+          blog.user.username === currentUser.username ?
+            <button onClick={removeBlog} >remove</button> :
+            null
         }
-      </div>  
-    </div>  
+      </div>
+    </div>
   );
-}
+};
 
 export default Blog;

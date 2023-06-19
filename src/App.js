@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import BlogForm from './components/BlogForm';
@@ -10,14 +10,15 @@ import Togglable from './components/Togglable';
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  
   const [notification, setNotification] = useState(null);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs));
     const  loggedUser = window.localStorage.getItem('loggedBlogAppUser');
     loggedUser && setUser(JSON.parse(loggedUser));
-  }, [])
+  }, []);
 
 
   async function handleLogin(credentials) {
@@ -40,7 +41,7 @@ const App = () => {
     blogService.setToken(null);
   }
 
-  async function createBlog(blog) {
+  async function handleCreate(blog) {
     blogService.setToken(user.token);
     try {
       await blogService.create(blog);
@@ -50,6 +51,7 @@ const App = () => {
         message: `${blog.title} by ${blog.author} added`,
         class: 'success'
       });
+      blogFormRef.current.toggleVisibility();
     } catch(err) {
       console.log(err);
       setNotification({
@@ -58,7 +60,7 @@ const App = () => {
       });
     }
   }
-  
+
   async function handleLike(newBlog) {
     try {
       await blogService.update(newBlog);
@@ -88,15 +90,15 @@ const App = () => {
         class: 'error'
       });
     }
-  } 
-  
+  }
+
 
   if(user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
         <Notification notif={notification} setNotification={setNotification}/>
-          <LoginForm handleLogin={handleLogin}/>
+        <LoginForm handleLogin={handleLogin}/>
       </div>
     );
   } else {
@@ -109,18 +111,18 @@ const App = () => {
           <button onClick={handleLogout} >logout</button>
         </p>
         <h2>Create New</h2>
-        <Togglable buttonLabel="create new blog" >
-          <BlogForm onCreate={createBlog}/>
+        <Togglable buttonLabel="create new blog" ref={blogFormRef} >
+          <BlogForm handleCreate={handleCreate}/>
         </Togglable>
-        <BlogList 
-          blogs={blogs} 
-          handleLike={handleLike} 
+        <BlogList
+          blogs={blogs}
+          handleLike={handleLike}
           currentUser={user}
           handleDelete={handleDelete}
         />
       </div>
-  )
-}
-}
+    );
+  }
+};
 
-export default App
+export default App;
